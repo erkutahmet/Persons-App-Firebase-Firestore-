@@ -31,7 +31,9 @@ class HomePage: UIViewController {
     private func setData() {
         _ = homePageVM.personsList.subscribe(onNext: { list in
             self.personsList = list
-            self.personsTableView.reloadData()
+            DispatchQueue.main.async {
+                self.personsTableView.reloadData()
+            }
         })
     }
     

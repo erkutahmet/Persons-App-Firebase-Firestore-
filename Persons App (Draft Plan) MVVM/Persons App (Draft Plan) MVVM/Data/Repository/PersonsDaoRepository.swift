@@ -19,7 +19,8 @@ class PersonsDaoRepository {
     }
     
     func update(person_id: String, person_name: String, person_phone: String) {
-        print("Person Update: \(person_id) -> \(person_name), \(person_phone)")
+        let updatedPerson:[String:Any] = ["person_name":person_name, "person_phone":person_phone]
+        collectionPersons.document(person_id).updateData(updatedPerson)
     }
     
     func delete(person_id: String) {
@@ -32,13 +33,22 @@ class PersonsDaoRepository {
     }
     
     func uploadPersons() {
-        var list = [Persons]()
-        let p1 = Persons(person_id: "1", person_name: "Ahmet", person_phone: "1111")
-        let p2 = Persons(person_id: "2", person_name: "Zeynep", person_phone: "2222")
-        let p3 = Persons(person_id: "3", person_name: "Beyza", person_phone: "3333")
-        list.append(p1)
-        list.append(p2)
-        list.append(p3)
-        personsList.onNext(list)
+        collectionPersons.addSnapshotListener{ snapshot, error in
+            var list = [Persons]()
+            
+            if let documents = snapshot?.documents {
+                for document in documents {
+                    let data = document.data()
+                    let person_id = document.documentID
+                    let person_name = data["person_name"] as? String ?? ""
+                    let person_phone = data["person_phone"] as? String ?? ""
+                    
+                    let person = Persons(person_id: person_id, person_name: person_name, person_phone: person_phone)
+                    list.append(person)
+                }
+            }
+            
+            self.personsList.onNext(list)
+        }
     }
 }
