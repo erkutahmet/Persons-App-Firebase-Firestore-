@@ -28,7 +28,25 @@ class PersonsDaoRepository {
     }
     
     func search(searchText: String) {
-        print("Person Search: \(searchText)")
+        collectionPersons.addSnapshotListener{ snapshot, error in
+            var list = [Persons]()
+            
+            if let documents = snapshot?.documents {
+                for document in documents {
+                    let data = document.data()
+                    let person_id = document.documentID
+                    let person_name = data["person_name"] as? String ?? ""
+                    let person_phone = data["person_phone"] as? String ?? ""
+                    
+                    if person_name.lowercased().contains(searchText.lowercased()) {
+                        let person = Persons(person_id: person_id, person_name: person_name, person_phone: person_phone)
+                        list.append(person)
+                    }
+                }
+            }
+            
+            self.personsList.onNext(list)
+        }
     }
     
     func uploadPersons() {

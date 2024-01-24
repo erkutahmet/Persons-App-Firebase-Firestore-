@@ -97,6 +97,10 @@ extension HomePage: UITableViewDelegate, UITableViewDataSource {
 
 extension HomePage: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        homePageVM.search(searchText: searchText)
+        if searchText == "" {
+            homePageVM.uploadPersons()
+        } else {
+            homePageVM.search(searchText: searchText)
+        }
     }
 }
