@@ -17,7 +17,7 @@ class HomePageViewModel {
         uploadPersons()
     }
     
-    func delete(person_id: Int) {
+    func delete(person_id: String) {
         pRepo.delete(person_id: person_id)
     }
     
